@@ -1,0 +1,747 @@
+{
+ "name": "Ajans — ParentHow Drive ve Takvim Kurulumu (tek seferlik)",
+ "nodes": [
+  {
+   "id": "7e629c74-32ae-42f7-8235-33cebf58cbd7",
+   "name": "Elle Çalıştır",
+   "type": "n8n-nodes-base.manualTrigger",
+   "typeVersion": 1,
+   "position": [
+    0,
+    0
+   ],
+   "parameters": {}
+  },
+  {
+   "id": "b0769bf2-3940-4f75-acd9-71b519c9545b",
+   "name": "Seviye 0 Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    240,
+    0
+   ],
+   "parameters": {
+    "jsCode": "return [{ json: { yol: '', ad: 'ParentHow Ajans', parent_id: 'root' } }];"
+   }
+  },
+  {
+   "id": "9e6087b9-ec31-4fba-884f-4dca0f48005c",
+   "name": "Seviye 0 Klasör",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    460,
+    0
+   ],
+   "parameters": {
+    "resource": "folder",
+    "operation": "create",
+    "name": "={{ $json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "d0b03861-83a9-411c-9823-1e28d3f0e671",
+   "name": "Harita 0",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    680,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const onc = {};\nconst hz = $('Seviye 0 Hazırla').all();\nconst out = $input.all();\nconst harita = { ...onc };\nout.forEach((o, i) => { harita[hz[i].json.yol] = o.json.id; });\nreturn [{ json: { harita } }];"
+   }
+  },
+  {
+   "id": "3974463d-f1ac-4b91-85d8-9411e497f381",
+   "name": "Seviye 1 Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    900,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 0').first().json.harita;\nconst liste = [\"Referans\", \"Yukleme\", \"Logo\", \"Videolar\", \"Referans/Carousel\", \"Referans/Story\", \"Referans/Kategori\", \"Referans/Carousel/Tema_01\", \"Referans/Carousel/Tema_02\", \"Referans/Carousel/Tema_03\", \"Referans/Story/Tema_01\", \"Referans/Story/Tema_02\", \"Referans/Story/Tema_03\", \"Referans/Story/Varsayilan\", \"Referans/Story/Diger\", \"Yukleme/Slide1\", \"Referans/Kategori/Hamilelik_Yenidogan\", \"Referans/Kategori/Bebek_Cocuk\", \"Referans/Kategori/Saglik_Bakim\", \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi\", \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya\", \"Referans/Kategori/Bebek_Cocuk/Bilgi\", \"Referans/Kategori/Bebek_Cocuk/Kampanya\", \"Referans/Kategori/Saglik_Bakim/Bilgi\", \"Referans/Kategori/Saglik_Bakim/Kampanya\"];\nreturn liste.filter(p => p.split('/').length === 1).map(p => { const ust = p.split('/').slice(0, -1).join('/'); return { json: { yol: p, ad: p.split('/').pop(), parent_id: harita[ust] } }; });"
+   }
+  },
+  {
+   "id": "e61a7d3c-e54c-4052-a66d-99423b696221",
+   "name": "Seviye 1 Klasör",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    1120,
+    0
+   ],
+   "parameters": {
+    "resource": "folder",
+    "operation": "create",
+    "name": "={{ $json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "d35853df-4632-4e05-bcda-c866bb3f3026",
+   "name": "Harita 1",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1340,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const onc = $('Harita 0').first().json.harita;\nconst hz = $('Seviye 1 Hazırla').all();\nconst out = $input.all();\nconst harita = { ...onc };\nout.forEach((o, i) => { harita[hz[i].json.yol] = o.json.id; });\nreturn [{ json: { harita } }];"
+   }
+  },
+  {
+   "id": "f55029d4-3052-4871-8ce8-96cf41dda2bd",
+   "name": "Seviye 2 Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    1560,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 1').first().json.harita;\nconst liste = [\"Referans\", \"Yukleme\", \"Logo\", \"Videolar\", \"Referans/Carousel\", \"Referans/Story\", \"Referans/Kategori\", \"Referans/Carousel/Tema_01\", \"Referans/Carousel/Tema_02\", \"Referans/Carousel/Tema_03\", \"Referans/Story/Tema_01\", \"Referans/Story/Tema_02\", \"Referans/Story/Tema_03\", \"Referans/Story/Varsayilan\", \"Referans/Story/Diger\", \"Yukleme/Slide1\", \"Referans/Kategori/Hamilelik_Yenidogan\", \"Referans/Kategori/Bebek_Cocuk\", \"Referans/Kategori/Saglik_Bakim\", \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi\", \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya\", \"Referans/Kategori/Bebek_Cocuk/Bilgi\", \"Referans/Kategori/Bebek_Cocuk/Kampanya\", \"Referans/Kategori/Saglik_Bakim/Bilgi\", \"Referans/Kategori/Saglik_Bakim/Kampanya\"];\nreturn liste.filter(p => p.split('/').length === 2).map(p => { const ust = p.split('/').slice(0, -1).join('/'); return { json: { yol: p, ad: p.split('/').pop(), parent_id: harita[ust] } }; });"
+   }
+  },
+  {
+   "id": "f0528808-df2e-447f-b345-cd781c9440c3",
+   "name": "Seviye 2 Klasör",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    1780,
+    0
+   ],
+   "parameters": {
+    "resource": "folder",
+    "operation": "create",
+    "name": "={{ $json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "3793665c-5d2e-417b-a564-4a64739e846e",
+   "name": "Harita 2",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2000,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const onc = $('Harita 1').first().json.harita;\nconst hz = $('Seviye 2 Hazırla').all();\nconst out = $input.all();\nconst harita = { ...onc };\nout.forEach((o, i) => { harita[hz[i].json.yol] = o.json.id; });\nreturn [{ json: { harita } }];"
+   }
+  },
+  {
+   "id": "5c118928-8fb2-4fed-8852-ca3febf59191",
+   "name": "Seviye 3 Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2220,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 2').first().json.harita;\nconst liste = [\"Referans\", \"Yukleme\", \"Logo\", \"Videolar\", \"Referans/Carousel\", \"Referans/Story\", \"Referans/Kategori\", \"Referans/Carousel/Tema_01\", \"Referans/Carousel/Tema_02\", \"Referans/Carousel/Tema_03\", \"Referans/Story/Tema_01\", \"Referans/Story/Tema_02\", \"Referans/Story/Tema_03\", \"Referans/Story/Varsayilan\", \"Referans/Story/Diger\", \"Yukleme/Slide1\", \"Referans/Kategori/Hamilelik_Yenidogan\", \"Referans/Kategori/Bebek_Cocuk\", \"Referans/Kategori/Saglik_Bakim\", \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi\", \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya\", \"Referans/Kategori/Bebek_Cocuk/Bilgi\", \"Referans/Kategori/Bebek_Cocuk/Kampanya\", \"Referans/Kategori/Saglik_Bakim/Bilgi\", \"Referans/Kategori/Saglik_Bakim/Kampanya\"];\nreturn liste.filter(p => p.split('/').length === 3).map(p => { const ust = p.split('/').slice(0, -1).join('/'); return { json: { yol: p, ad: p.split('/').pop(), parent_id: harita[ust] } }; });"
+   }
+  },
+  {
+   "id": "65e21149-6b20-4cb4-a64d-575ccea63d5b",
+   "name": "Seviye 3 Klasör",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    2440,
+    0
+   ],
+   "parameters": {
+    "resource": "folder",
+    "operation": "create",
+    "name": "={{ $json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "ef45a580-44a1-43fd-99b9-39003c9d2a88",
+   "name": "Harita 3",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2660,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const onc = $('Harita 2').first().json.harita;\nconst hz = $('Seviye 3 Hazırla').all();\nconst out = $input.all();\nconst harita = { ...onc };\nout.forEach((o, i) => { harita[hz[i].json.yol] = o.json.id; });\nreturn [{ json: { harita } }];"
+   }
+  },
+  {
+   "id": "34e3bfe0-8802-457b-8d1b-d2b74625e810",
+   "name": "Seviye 4 Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    2880,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 3').first().json.harita;\nconst liste = [\"Referans\", \"Yukleme\", \"Logo\", \"Videolar\", \"Referans/Carousel\", \"Referans/Story\", \"Referans/Kategori\", \"Referans/Carousel/Tema_01\", \"Referans/Carousel/Tema_02\", \"Referans/Carousel/Tema_03\", \"Referans/Story/Tema_01\", \"Referans/Story/Tema_02\", \"Referans/Story/Tema_03\", \"Referans/Story/Varsayilan\", \"Referans/Story/Diger\", \"Yukleme/Slide1\", \"Referans/Kategori/Hamilelik_Yenidogan\", \"Referans/Kategori/Bebek_Cocuk\", \"Referans/Kategori/Saglik_Bakim\", \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi\", \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya\", \"Referans/Kategori/Bebek_Cocuk/Bilgi\", \"Referans/Kategori/Bebek_Cocuk/Kampanya\", \"Referans/Kategori/Saglik_Bakim/Bilgi\", \"Referans/Kategori/Saglik_Bakim/Kampanya\"];\nreturn liste.filter(p => p.split('/').length === 4).map(p => { const ust = p.split('/').slice(0, -1).join('/'); return { json: { yol: p, ad: p.split('/').pop(), parent_id: harita[ust] } }; });"
+   }
+  },
+  {
+   "id": "01f16547-53ce-4dc7-b960-4f94d286f9b1",
+   "name": "Seviye 4 Klasör",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    3100,
+    0
+   ],
+   "parameters": {
+    "resource": "folder",
+    "operation": "create",
+    "name": "={{ $json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "fe6ea851-f3de-49a8-85ed-02cb336d4fd5",
+   "name": "Harita 4",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    3320,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const onc = $('Harita 3').first().json.harita;\nconst hz = $('Seviye 4 Hazırla').all();\nconst out = $input.all();\nconst harita = { ...onc };\nout.forEach((o, i) => { harita[hz[i].json.yol] = o.json.id; });\nreturn [{ json: { harita } }];"
+   }
+  },
+  {
+   "id": "bec76067-5f71-4e93-aa35-687a67dcf293",
+   "name": "Dosya Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    3540,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 4').first().json.harita;\nconst dosyalar = [{\"yol\": \"Logo/logo_sag_alt_carousel_son.png\", \"ad\": \"logo_sag_alt_carousel_son.png\", \"klasor\": \"Logo\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Logo/logo_sag_alt_carousel_son.png\"}, {\"yol\": \"Logo/logo_sag_alt_tekli.png\", \"ad\": \"logo_sag_alt_tekli.png\", \"klasor\": \"Logo\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Logo/logo_sag_alt_tekli.png\"}, {\"yol\": \"Logo/logo_sol_ust.png\", \"ad\": \"logo_sol_ust.png\", \"klasor\": \"Logo\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Logo/logo_sol_ust.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/01_kapak.png\", \"ad\": \"01_kapak.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/01_kapak.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/02_adim.png\", \"ad\": \"02_adim.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/02_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/03_adim.png\", \"ad\": \"03_adim.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/03_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/04_adim.png\", \"ad\": \"04_adim.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/04_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/05_adim.png\", \"ad\": \"05_adim.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/05_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/06_adim.png\", \"ad\": \"06_adim.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/06_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_01/07_son.png\", \"ad\": \"07_son.png\", \"klasor\": \"Referans/Carousel/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_01/07_son.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/01_kapak.png\", \"ad\": \"01_kapak.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/01_kapak.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/02_adim.png\", \"ad\": \"02_adim.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/02_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/03_adim.png\", \"ad\": \"03_adim.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/03_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/04_adim.png\", \"ad\": \"04_adim.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/04_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/05_adim.png\", \"ad\": \"05_adim.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/05_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/06_adim.png\", \"ad\": \"06_adim.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/06_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_02/07_son.png\", \"ad\": \"07_son.png\", \"klasor\": \"Referans/Carousel/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_02/07_son.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/01_kapak.png\", \"ad\": \"01_kapak.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/01_kapak.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/02_adim.png\", \"ad\": \"02_adim.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/02_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/03_adim.png\", \"ad\": \"03_adim.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/03_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/04_adim.png\", \"ad\": \"04_adim.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/04_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/05_adim.png\", \"ad\": \"05_adim.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/05_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/06_adim.png\", \"ad\": \"06_adim.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/06_adim.png\"}, {\"yol\": \"Referans/Carousel/Tema_03/07_son.png\", \"ad\": \"07_son.png\", \"klasor\": \"Referans/Carousel/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Carousel/Tema_03/07_son.png\"}, {\"yol\": \"Referans/Kategori/Bebek_Cocuk/Bilgi/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Bebek_Cocuk/Bilgi\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Bebek_Cocuk/Bilgi/referans.png\"}, {\"yol\": \"Referans/Kategori/Bebek_Cocuk/Kampanya/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Bebek_Cocuk/Kampanya\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Bebek_Cocuk/Kampanya/referans.png\"}, {\"yol\": \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Hamilelik_Yenidogan/Bilgi\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Hamilelik_Yenidogan/Bilgi/referans.png\"}, {\"yol\": \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Hamilelik_Yenidogan/Kampanya\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Hamilelik_Yenidogan/Kampanya/referans.png\"}, {\"yol\": \"Referans/Kategori/Saglik_Bakim/Bilgi/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Saglik_Bakim/Bilgi\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Saglik_Bakim/Bilgi/referans.png\"}, {\"yol\": \"Referans/Kategori/Saglik_Bakim/Kampanya/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Kategori/Saglik_Bakim/Kampanya\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Kategori/Saglik_Bakim/Kampanya/referans.png\"}, {\"yol\": \"Referans/Story/Diger/referans.png\", \"ad\": \"referans.png\", \"klasor\": \"Referans/Story/Diger\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Diger/referans.png\"}, {\"yol\": \"Referans/Story/Tema_01/story_anket.png\", \"ad\": \"story_anket.png\", \"klasor\": \"Referans/Story/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_01/story_anket.png\"}, {\"yol\": \"Referans/Story/Tema_01/story_ipucu.png\", \"ad\": \"story_ipucu.png\", \"klasor\": \"Referans/Story/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_01/story_ipucu.png\"}, {\"yol\": \"Referans/Story/Tema_01/story_soru.png\", \"ad\": \"story_soru.png\", \"klasor\": \"Referans/Story/Tema_01\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_01/story_soru.png\"}, {\"yol\": \"Referans/Story/Tema_02/story_anket.png\", \"ad\": \"story_anket.png\", \"klasor\": \"Referans/Story/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_02/story_anket.png\"}, {\"yol\": \"Referans/Story/Tema_02/story_ipucu.png\", \"ad\": \"story_ipucu.png\", \"klasor\": \"Referans/Story/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_02/story_ipucu.png\"}, {\"yol\": \"Referans/Story/Tema_02/story_soru.png\", \"ad\": \"story_soru.png\", \"klasor\": \"Referans/Story/Tema_02\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_02/story_soru.png\"}, {\"yol\": \"Referans/Story/Tema_03/story_anket.png\", \"ad\": \"story_anket.png\", \"klasor\": \"Referans/Story/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_03/story_anket.png\"}, {\"yol\": \"Referans/Story/Tema_03/story_ipucu.png\", \"ad\": \"story_ipucu.png\", \"klasor\": \"Referans/Story/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_03/story_ipucu.png\"}, {\"yol\": \"Referans/Story/Tema_03/story_soru.png\", \"ad\": \"story_soru.png\", \"klasor\": \"Referans/Story/Tema_03\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Tema_03/story_soru.png\"}, {\"yol\": \"Referans/Story/Varsayilan/donemipucu_bebek_cocuk.png\", \"ad\": \"donemipucu_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/donemipucu_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/donemipucu_hamilelik_yenidogan.png\", \"ad\": \"donemipucu_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/donemipucu_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/donemipucu_ortak.png\", \"ad\": \"donemipucu_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/donemipucu_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/donemipucu_saglik_bakim.png\", \"ad\": \"donemipucu_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/donemipucu_saglik_bakim.png\"}, {\"yol\": \"Referans/Story/Varsayilan/gunlukan_bebek_cocuk.png\", \"ad\": \"gunlukan_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/gunlukan_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/gunlukan_hamilelik_yenidogan.png\", \"ad\": \"gunlukan_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/gunlukan_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/gunlukan_ortak.png\", \"ad\": \"gunlukan_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/gunlukan_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/gunlukan_saglik_bakim.png\", \"ad\": \"gunlukan_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/gunlukan_saglik_bakim.png\"}, {\"yol\": \"Referans/Story/Varsayilan/mitgercek_bebek_cocuk.png\", \"ad\": \"mitgercek_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/mitgercek_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/mitgercek_hamilelik_yenidogan.png\", \"ad\": \"mitgercek_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/mitgercek_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/mitgercek_ortak.png\", \"ad\": \"mitgercek_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/mitgercek_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/mitgercek_saglik_bakim.png\", \"ad\": \"mitgercek_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/mitgercek_saglik_bakim.png\"}, {\"yol\": \"Referans/Story/Varsayilan/soruanket_bebek_cocuk.png\", \"ad\": \"soruanket_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/soruanket_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/soruanket_hamilelik_yenidogan.png\", \"ad\": \"soruanket_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/soruanket_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/soruanket_ortak.png\", \"ad\": \"soruanket_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/soruanket_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/soruanket_saglik_bakim.png\", \"ad\": \"soruanket_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/soruanket_saglik_bakim.png\"}, {\"yol\": \"Referans/Story/Varsayilan/tanitim_bebek_cocuk.png\", \"ad\": \"tanitim_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/tanitim_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/tanitim_hamilelik_yenidogan.png\", \"ad\": \"tanitim_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/tanitim_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/tanitim_ortak.png\", \"ad\": \"tanitim_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/tanitim_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/tanitim_saglik_bakim.png\", \"ad\": \"tanitim_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/tanitim_saglik_bakim.png\"}, {\"yol\": \"Referans/Story/Varsayilan/yirmisaniye_bebek_cocuk.png\", \"ad\": \"yirmisaniye_bebek_cocuk.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/yirmisaniye_bebek_cocuk.png\"}, {\"yol\": \"Referans/Story/Varsayilan/yirmisaniye_hamilelik_yenidogan.png\", \"ad\": \"yirmisaniye_hamilelik_yenidogan.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/yirmisaniye_hamilelik_yenidogan.png\"}, {\"yol\": \"Referans/Story/Varsayilan/yirmisaniye_ortak.png\", \"ad\": \"yirmisaniye_ortak.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/yirmisaniye_ortak.png\"}, {\"yol\": \"Referans/Story/Varsayilan/yirmisaniye_saglik_bakim.png\", \"ad\": \"yirmisaniye_saglik_bakim.png\", \"klasor\": \"Referans/Story/Varsayilan\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/Referans/Story/Varsayilan/yirmisaniye_saglik_bakim.png\"}, {\"yol\": \"kontrol.png\", \"ad\": \"kontrol.png\", \"klasor\": \"\", \"url\": \"https://raw.githubusercontent.com/Tokuropus/parenthow-ref-tmp/main/kontrol.png\"}];\nreturn dosyalar.map(f => ({ json: { ...f, parent_id: harita[f.klasor] } }));"
+   }
+  },
+  {
+   "id": "de31ac2a-f4e8-401a-81ec-e1be7442736e",
+   "name": "İndir",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.4,
+   "position": [
+    3760,
+    0
+   ],
+   "parameters": {
+    "method": "GET",
+    "url": "={{ $json.url }}",
+    "options": {
+     "response": {
+      "response": {
+       "responseFormat": "file"
+      }
+     }
+    },
+    "retryOnFail": true
+   }
+  },
+  {
+   "id": "5c6db2ac-35d3-4ac2-b5c1-dd4fb0041309",
+   "name": "Yükle",
+   "type": "n8n-nodes-base.googleDrive",
+   "typeVersion": 3,
+   "position": [
+    3980,
+    0
+   ],
+   "parameters": {
+    "resource": "file",
+    "operation": "upload",
+    "inputDataFieldName": "data",
+    "name": "={{ $('Dosya Hazırla').all()[$itemIndex].json.ad }}",
+    "driveId": {
+     "__rl": true,
+     "mode": "list",
+     "value": "My Drive"
+    },
+    "folderId": {
+     "__rl": true,
+     "mode": "id",
+     "value": "={{ $('Dosya Hazırla').all()[$itemIndex].json.parent_id }}"
+    },
+    "options": {}
+   },
+   "credentials": {
+    "googleDriveOAuth2Api": {
+     "id": "AbibO1mK8sRKHC6s",
+     "name": "Google Drive account"
+    }
+   }
+  },
+  {
+   "id": "6bacd625-e81f-4580-a210-5d355881431d",
+   "name": "Drive Sonucu",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    4200,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const harita = $('Harita 4').first().json.harita;\nconst dz = $('Dosya Hazırla').all();\nconst yuk = $input.all();\nconst dosya = {};\nyuk.forEach((y, i) => { dosya[dz[i].json.yol] = y.json.id; });\nreturn [{ json: { harita, dosya } }];"
+   }
+  },
+  {
+   "id": "f117ecba-d57a-4177-acc9-cca26e7d42bf",
+   "name": "Sheet Gövdesi",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    4420,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const body = { properties: { title: 'parenthow_icerik_takvimi' }, sheets: [ { properties: { title: 'parenthow_icerik_takvimi' } }, { properties: { title: 'Revizyon Arşivi' } } ] };\nreturn [{ json: { body } }];"
+   }
+  },
+  {
+   "id": "453babde-6efe-4e7e-8087-a80edafa1bae",
+   "name": "Takvim Oluştur",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.4,
+   "position": [
+    4640,
+    0
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "https://sheets.googleapis.com/v4/spreadsheets",
+    "authentication": "predefinedCredentialType",
+    "nodeCredentialType": "googleSheetsOAuth2Api",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ $json.body }}",
+    "options": {}
+   },
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "0HtxUW3ZQxmacYUD",
+     "name": "Google Sheets account"
+    }
+   }
+  },
+  {
+   "id": "446e2be3-6265-458a-b969-55f492a779c4",
+   "name": "Başlık Hazırla",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    4860,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const sid = $json.spreadsheetId;\nconst body = { valueInputOption: 'RAW', data: [ { range: \"'parenthow_icerik_takvimi'!A1\", values: [[\"Tarih\", \"Saat\", \"Platform\", \"Kurs\", \"İçerik Türü\", \"Carousel Grubu\", \"Slide No\", \"Caption\", \"Görsel Prompt\", \"Hashtagler\", \"CTA\", \"Durum\", \"Onay Notu\", \"Görsel URL\", \"Upload-Post Job ID\", \"Upload-Post Request ID\", \"Yayın Durumu\", \"Yayın Hatası\", \"Buffer Post ID\", \"Instagram Media ID\"]] }, { range: \"'Revizyon Arşivi'!A1\", values: [[\"Zaman\", \"Row No\", \"İçerik Türü\", \"Kurs\", \"Kullanıcı Notu\", \"Eski Caption\", \"Yeni Caption\", \"Eski Görsel Prompt\", \"Yeni Görsel Prompt\", \"Ham LLM\", \"Görsel URL\"]] } ] };\nreturn [{ json: { sid, body, url: 'https://sheets.googleapis.com/v4/spreadsheets/' + sid + '/values:batchUpdate' } }];"
+   }
+  },
+  {
+   "id": "44c86257-c167-4108-8800-2fcb165c957b",
+   "name": "Başlıkları Yaz",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.4,
+   "position": [
+    5080,
+    0
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $json.url }}",
+    "authentication": "predefinedCredentialType",
+    "nodeCredentialType": "googleSheetsOAuth2Api",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ $json.body }}",
+    "options": {}
+   },
+   "credentials": {
+    "googleSheetsOAuth2Api": {
+     "id": "0HtxUW3ZQxmacYUD",
+     "name": "Google Sheets account"
+    }
+   }
+  },
+  {
+   "id": "f4cec88c-086d-475c-a15e-b525a6ee6d8f",
+   "name": "Özet",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    5300,
+    0
+   ],
+   "parameters": {
+    "jsCode": "const d = $('Drive Sonucu').first().json; const h = d.harita; const f = d.dosya;\nconst t = $('Takvim Oluştur').first().json;\nconst gid = n => { const s = (t.sheets || []).find(s => s.properties.title === n); return s ? String(s.properties.sheetId) : null; };\nconst ozet = { 'veri.takvim_sheet_id': t.spreadsheetId, 'veri.takvim_sekme_gid': gid('parenthow_icerik_takvimi'), 'veri.revizyon_arsivi_gid': gid('Revizyon Arşivi'), 'veri.takvim_adi': 'parenthow_icerik_takvimi',\n  'tema.story.Tema_01': h['Referans/Story/Tema_01'], 'tema.story.Tema_02': h['Referans/Story/Tema_02'], 'tema.story.Tema_03': h['Referans/Story/Tema_03'],\n  'tema.carousel.Tema_01': h['Referans/Carousel/Tema_01'], 'tema.carousel.Tema_02': h['Referans/Carousel/Tema_02'], 'tema.carousel.Tema_03': h['Referans/Carousel/Tema_03'],\n  'kat1.bilgi_klasor': h['Referans/Kategori/Hamilelik_Yenidogan/Bilgi'], 'kat1.kampanya_klasor': h['Referans/Kategori/Hamilelik_Yenidogan/Kampanya'],\n  'kat2.bilgi_klasor': h['Referans/Kategori/Bebek_Cocuk/Bilgi'], 'kat2.kampanya_klasor': h['Referans/Kategori/Bebek_Cocuk/Kampanya'],\n  'kat3.bilgi_klasor': h['Referans/Kategori/Saglik_Bakim/Bilgi'], 'kat3.kampanya_klasor': h['Referans/Kategori/Saglik_Bakim/Kampanya'],\n  'story.varsayilan_referans_klasor': h['Referans/Story/Varsayilan'], 'story.diger_referans_klasor': h['Referans/Story/Diger'], 'veri.slide1_yukleme_klasor': h['Yukleme/Slide1'],\n  'logo.sag_alt_tekli': f['Logo/logo_sag_alt_tekli.png'], 'logo.sag_alt_carousel_son': f['Logo/logo_sag_alt_carousel_son.png'], 'logo.sol_ust': f['Logo/logo_sol_ust.png'],\n  'drive.kok_klasor': h[''], 'drive.videolar_klasor': h['Videolar'] };\nreturn [{ json: ozet }];"
+   }
+  }
+ ],
+ "connections": {
+  "Elle Çalıştır": {
+   "main": [
+    [
+     {
+      "node": "Seviye 0 Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 0 Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Seviye 0 Klasör",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 0 Klasör": {
+   "main": [
+    [
+     {
+      "node": "Harita 0",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Harita 0": {
+   "main": [
+    [
+     {
+      "node": "Seviye 1 Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 1 Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Seviye 1 Klasör",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 1 Klasör": {
+   "main": [
+    [
+     {
+      "node": "Harita 1",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Harita 1": {
+   "main": [
+    [
+     {
+      "node": "Seviye 2 Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 2 Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Seviye 2 Klasör",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 2 Klasör": {
+   "main": [
+    [
+     {
+      "node": "Harita 2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Harita 2": {
+   "main": [
+    [
+     {
+      "node": "Seviye 3 Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 3 Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Seviye 3 Klasör",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 3 Klasör": {
+   "main": [
+    [
+     {
+      "node": "Harita 3",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Harita 3": {
+   "main": [
+    [
+     {
+      "node": "Seviye 4 Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 4 Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Seviye 4 Klasör",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Seviye 4 Klasör": {
+   "main": [
+    [
+     {
+      "node": "Harita 4",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Harita 4": {
+   "main": [
+    [
+     {
+      "node": "Dosya Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Dosya Hazırla": {
+   "main": [
+    [
+     {
+      "node": "İndir",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "İndir": {
+   "main": [
+    [
+     {
+      "node": "Yükle",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Yükle": {
+   "main": [
+    [
+     {
+      "node": "Drive Sonucu",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Drive Sonucu": {
+   "main": [
+    [
+     {
+      "node": "Sheet Gövdesi",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Sheet Gövdesi": {
+   "main": [
+    [
+     {
+      "node": "Takvim Oluştur",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Takvim Oluştur": {
+   "main": [
+    [
+     {
+      "node": "Başlık Hazırla",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Başlık Hazırla": {
+   "main": [
+    [
+     {
+      "node": "Başlıkları Yaz",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Başlıkları Yaz": {
+   "main": [
+    [
+     {
+      "node": "Özet",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1"
+ }
+}
